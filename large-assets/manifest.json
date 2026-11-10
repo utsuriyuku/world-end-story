@@ -3,9 +3,8 @@
   "parts": [
     "game.pck.part00",
     "game.pck.part01",
-    "game.pck.part02",
-    "game.pck.part03"
+    "game.pck.part02"
   ],
-  "bytes": 192022340,
-  "sha256": "df4ad547a918eec842ebb094501a6cb85ecf3362643b41c8f8447611078fadcb"
+  "bytes": 141704916,
+  "sha256": "6d3a46fe6b4f835fdbdc6d4ef94f3384676787bb7c080073fcc816797b8469b2"
 }
