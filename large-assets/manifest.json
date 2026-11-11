@@ -2,9 +2,8 @@
   "target": "prologue/game.pck",
   "parts": [
     "game.pck.part00",
-    "game.pck.part01",
-    "game.pck.part02"
+    "game.pck.part01"
   ],
-  "bytes": 120911304,
-  "sha256": "7a80fa1f60046bb77d36eabdd4c3da95cdf4687aee00935b35b09123ec2e359c"
+  "bytes": 90332248,
+  "sha256": "7851caf7a5f91c128937b16b088ac28563b92c13a8189ddde2b8d5c68106aa82"
 }
