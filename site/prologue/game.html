@@ -109,7 +109,7 @@ body {
 
 		<script src="game.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"game","experimentalVK":false,"fileSizes":{"game.pck":90332248,"game.wasm":38057390},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"game","experimentalVK":false,"fileSizes":{"game.pck":80838208,"game.wasm":38057390},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const chapter=new URLSearchParams(location.search).get('chapter');
 if(chapter==='g04')GODOT_CONFIG.args=['res://qa_g04.tscn','--','--start-g04'];
@@ -202,6 +202,19 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 	} else {
 		setStatusMode('progress');
+
+        const timingEnabled=new URLSearchParams(location.search).has('timing') || new URLSearchParams(parent.location.search).has('timing');
+        const records={}; window.loadTimings=records;
+        const panel=document.createElement('div');
+        if(timingEnabled){panel.style.cssText='position:fixed;top:8px;left:8px;right:8px;z-index:999;background:#10202de8;color:#eef4f5;padding:12px;font:12px/1.7 sans-serif;pointer-events:none';document.body.appendChild(panel);}
+        const begin=performance.now();
+        function renderTiming(){if(!timingEnabled)return;const rows=['加载计时（本次访问）'];for(const key of Object.keys(records))rows.push(key+'：'+records[key]);rows.push('总计：'+((performance.now()-begin)/1000).toFixed(2)+' 秒');panel.textContent=rows.join('\n');panel.style.whiteSpace='pre-line';}
+        const observer=new PerformanceObserver(list=>{for(const e of list.getEntries()){if(/game\.(pck|wasm)(?:\?|$)/.test(e.name)){const label=e.name.includes('.pck')?'资源包下载':'引擎文件下载';records[label]=(e.duration/1000).toFixed(2)+' 秒'+(e.transferSize===0?'（缓存或未报告传输量）':'');renderTiming();}}});observer.observe({type:'resource',buffered:true});
+        const oldInit=engine.init.bind(engine);let initRecorded=false;
+        engine.init=function(...args){if(initRecorded)return oldInit(...args);initRecorded=true;const t=performance.now();return oldInit(...args).then(v=>{records['引擎准备（含下载/编译，可与资源下载重叠）']=((performance.now()-t)/1000).toFixed(2)+' 秒';renderTiming();return v;});};
+        const oldStart=engine.start.bind(engine);
+        engine.start=function(...args){const t=performance.now();return oldStart(...args).then(v=>{records['资源装入与游戏启动']=((performance.now()-t)/1000).toFixed(2)+' 秒';renderTiming();return v;});};
+        renderTiming();
 		engine.startGame({
 			'onProgress': function (current, total) {
 				if (current > 0 && total > 0) {
@@ -214,6 +227,7 @@ const engine = new Engine(GODOT_CONFIG);
 			},
 		}).then(() => {
 			setStatusMode('hidden');
+            records['启动流程完成']=((performance.now()-begin)/1000).toFixed(2)+' 秒';renderTiming();
 		}, displayFailureNotice);
 	}
 }());
