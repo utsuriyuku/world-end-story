@@ -5,11 +5,11 @@ window.createDailyEnding=function(canvas,ctx,W,H){
  let pending=null,loaded=false,loadError=null;function preload(){if(pending)return pending;pending=Promise.all(['afterglow','window','leave','crossing'].map(name=>new Promise((resolve,reject)=>{const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='auto';v.onloadeddata=()=>{media[name]=v;resolve()};v.onerror=()=>reject(Error('G08视频未加载：'+name));v.src='g08_v2/'+(name==='leave'?'promenade_v4':name)+'.mp4?v=20261106clean1';v.load()}))).then(()=>{loaded=true}).catch(e=>{loadError=e;throw e});return pending;}
  const retained=document.createElement('canvas');retained.width=W;retained.height=H;const retainedCtx=retained.getContext('2d');let hasFrame=false;
  function play(name){Object.values(media).forEach(v=>v.pause());const v=media[name];v.currentTime=0;v.play().catch(()=>{});s.clip=name;}
- function enter(stage){s.stage=stage;s.t=0;s.held=false;s.history.push(stage);if(media[stage])play(stage);if(stage==='crossing-wait'){Object.values(media).forEach(v=>v.pause());s.clip='crossing';media.crossing.currentTime=0;}}
+ function enter(stage){s.stage=stage;s.t=0;s.held=false;s.history.push(stage);if(media[stage])play(stage);if(stage==='leave'||stage==='crossing')window.GameAudio?.play('steps');if(stage==='crossing-wait'){window.GameAudio?.stop('steps');Object.values(media).forEach(v=>v.pause());s.clip='crossing';media.crossing.currentTime=0;}}
  function point(e){const r=canvas.getBoundingClientRect();return[(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]}
  function down(e){const p=point(e);if(s.stage==='window'&&media.window.currentTime>=2&&p[0]>.32&&p[0]<.53&&p[1]>.69&&p[1]<.87){s.held=true;s.start=p[1];canvas.setPointerCapture(e.pointerId)}else if(s.stage==='corridor-hold'&&Math.hypot((p[0]-.30)/.14,(p[1]-.66)/.11)<1){s.stage='leave';s.t=1;s.walkResumed=true;s.history.push('corridor-resume');media.leave.play().catch(()=>{});}else if(s.stage==='crossing-wait'&&p[1]>.55)enter('crossing');}
  function move(e){if(s.held)s.take=clamp((point(e)[1]-s.start)/.12)}
- function up(){if(s.held){s.held=false;enter('take-fade')}}
+ function up(){if(s.held){s.held=false;window.GameAudio?.play('cloth');enter('take-fade')}}
  function cancel(){s.held=false;s.take=0}
  function pause(on){s.paused=on;if(on)Object.values(media).forEach(v=>v.pause());else if(s.clip&&['afterglow','window','leave','crossing'].includes(s.stage)&&!media[s.clip].ended)media[s.clip].play().catch(()=>{})}
  function update(dt){if(!loaded){preload().catch(()=>{});return;}if(s.paused)return;s.t+=dt;s.total+=dt;if(!s.started){s.started=true;play('afterglow')}
