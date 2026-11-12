@@ -7,7 +7,7 @@ window.createDailyEnding=function(canvas,ctx,W,H){
  function play(name){Object.values(media).forEach(v=>v.pause());const v=media[name];v.currentTime=0;v.play().catch(()=>{});s.clip=name;}
  function enter(stage){s.stage=stage;s.t=0;s.held=false;s.history.push(stage);if(media[stage])play(stage);if(stage==='leave'||stage==='crossing')window.GameAudio?.play('steps');if(stage==='crossing-wait'){window.GameAudio?.stop('steps');Object.values(media).forEach(v=>v.pause());s.clip='crossing';media.crossing.currentTime=0;}}
  function point(e){const r=canvas.getBoundingClientRect();return[(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]}
- function down(e){const p=point(e);if(s.stage==='window'&&media.window.currentTime>=2&&p[0]>.32&&p[0]<.53&&p[1]>.69&&p[1]<.87){s.held=true;s.start=p[1];canvas.setPointerCapture(e.pointerId)}else if(s.stage==='corridor-hold'&&Math.hypot((p[0]-.30)/.14,(p[1]-.66)/.11)<1){s.stage='leave';s.t=1;s.walkResumed=true;s.history.push('corridor-resume');media.leave.play().catch(()=>{});}else if(s.stage==='crossing-wait'&&p[1]>.55)enter('crossing');}
+ function down(e){const p=point(e);if(s.stage==='window'&&media.window.currentTime>=2&&p[0]>.32&&p[0]<.53&&p[1]>.69&&p[1]<.87){s.held=true;s.start=p[1];canvas.setPointerCapture(e.pointerId)}else if(s.stage==='corridor-hold'&&Math.hypot((p[0]-.30)/.14,(p[1]-.66)/.11)<1){s.stage='leave';s.t=1;s.walkResumed=true;s.history.push('corridor-resume');window.GameAudio?.play('steps');media.leave.play().catch(()=>{});}else if(s.stage==='crossing-wait'&&p[1]>.55)enter('crossing');}
  function move(e){if(s.held)s.take=clamp((point(e)[1]-s.start)/.12)}
  function up(){if(s.held){s.held=false;window.GameAudio?.play('cloth');enter('take-fade')}}
  function cancel(){s.held=false;s.take=0}

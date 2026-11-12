@@ -17,7 +17,7 @@
     door: 3.6, pencil: 4.5, paper: 1.1, tram: 7.5 };
   const active = new Map(), last = new Map();
   const loops = new Set(['fire', 'pencil']);
-  let paused = false;
+  let paused = false, hidden = document.hidden;
   function stop(cue) {
     const instance = active.get(cue);
     if (!instance) return;
@@ -27,7 +27,7 @@
     active.delete(cue);
   }
   function play(cue) {
-    if (!files[cue] || paused) return;
+    if (!files[cue] || paused || hidden) return;
     const now = performance.now();
     if (now - (last.get(cue) || -10000) < (cue === 'steps' ? 650 : 230)) return;
     last.set(cue, now);
@@ -46,5 +46,8 @@
     if (paused) for (const cue of [...active.keys()]) stop(cue);
   }
   window.GameAudio = { play, stop, pause };
-  document.addEventListener('visibilitychange', () => pause(document.hidden));
+  document.addEventListener('visibilitychange', () => {
+    hidden = document.hidden;
+    if (hidden) for (const cue of [...active.keys()]) stop(cue);
+  });
 })();
