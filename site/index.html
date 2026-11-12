@@ -1,8 +1,8 @@
 <!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>我们只在世界毁灭时相见</title><style>html,body{margin:0;width:100%;height:100%;background:#eeece5;overflow:hidden}iframe{position:absolute;inset:0;width:min(100vw,56.25vh);height:100%;border:0;left:50%;transform:translateX(-50%)}#loading{position:fixed;inset:0;display:grid;place-items:center;background:#eeece5;color:#66747b;font:15px sans-serif;z-index:3}#loading[hidden]{display:none}</style><iframe id="game" title="游戏" allow="autoplay; fullscreen" src="prologue/game.html"></iframe><div id="loading" hidden>正在接续故事…</div><script>
 if(new URLSearchParams(location.search).get('chapter')==='g04')document.getElementById('game').src='prologue/game.html?chapter=g04';
 let transitioning=false;
-window.beginFinale=()=>{if(transitioning)return;transitioning=true;document.getElementById('loading').hidden=false;document.getElementById('game').src='finale/interaction_review.html?from=g04';};
+window.beginFinale=()=>{if(transitioning)return;transitioning=true;window.dispatchEvent(new Event('finale-starting'));document.getElementById('loading').hidden=false;document.getElementById('game').src='finale/interaction_review.html?from=g04';};
 window.addEventListener('message',e=>{if(e.origin!==location.origin)return;if(e.data==='story-ready')document.getElementById('loading').hidden=true;});
 
 if(['127.0.0.1','localhost'].includes(location.hostname))setInterval(()=>fetch('/__heartbeat',{cache:'no-store'}).catch(()=>{}),5000);
-</script></html>
+</script><script src="preload.js?v=1"></script></html>

@@ -1,6 +1,8 @@
 from pathlib import Path
 import gzip,hashlib,json,shutil
 root=Path(__file__).resolve().parent
+import subprocess,sys
+subprocess.run([sys.executable,str(root/'generate_preload.py')],check=True)
 out=root/'dist'
 assert out.resolve() == (root/'dist').resolve() and out.resolve().parent == root.resolve()
 if out.exists(): shutil.rmtree(out)

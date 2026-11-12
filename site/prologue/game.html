@@ -227,6 +227,7 @@ const engine = new Engine(GODOT_CONFIG);
 			},
 		}).then(() => {
 			setStatusMode('hidden');
+            window.parent.postMessage('prologue-started',location.origin);
             records['启动流程完成']=((performance.now()-begin)/1000).toFixed(2)+' 秒';renderTiming();
 		}, displayFailureNotice);
 	}
