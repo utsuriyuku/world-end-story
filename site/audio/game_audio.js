@@ -12,6 +12,7 @@
     stone_drop: .34, fire: .13, steps: .12, waves: .27,
     rockfall: .32, door: .24, pencil: .12, paper: .18, tram: .12
   };
+  const gain = Math.pow(10, 2 / 20); // Raise every sound effect by 2 dB.
   const limits = { heal: 2, coin: 1.3, cloth: 1.4, stone_move: 1.5,
     stone_drop: 1.6, fire: 3, steps: 4.8, waves: 6.5, rockfall: 4,
     door: 3.6, pencil: 4.5, paper: 1.1, tram: 7.5 };
@@ -33,7 +34,7 @@
     last.set(cue, now);
     stop(cue);
     const audio = new Audio(new URL(files[cue], document.currentScript?.src || new URL('../audio/', location.href)));
-    audio.volume = levels[cue];
+    audio.volume = Math.min(1, levels[cue] * gain);
     audio.preload = 'auto';
     audio.loop = loops.has(cue);
     const instance = { audio, timer: cue === 'fire' ? null : setTimeout(() => stop(cue), limits[cue] * 1000) };

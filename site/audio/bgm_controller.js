@@ -12,7 +12,7 @@
   const base = new URL('.', document.currentScript.src);
   const files = { calm: 'bgm/calm.mp3', disaster: 'bgm/disaster.mp3',
     duel: 'bgm/duel.mp3', dialogue: 'bgm/dialogue.mp3' };
-  const level = Math.pow(10, -4 / 20); // Four decibels below the supplied files.
+  const level = Math.pow(10, -12 / 20); // Eight dB below the previous -4 dB setting.
   let current = null, previous = null, fade = null;
   let paused = false, hidden = document.hidden;
 
