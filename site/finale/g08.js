@@ -23,12 +23,12 @@ window.createDailyEnding=function(canvas,ctx,W,H){
  else if(s.stage==='exit'&&media.exit.ended)enter('crossing-wait');
  else if(s.stage==='crossing'&&media.crossing.ended)enter('end');}
  function glow(x,y,arrow=false){ctx.save();ctx.shadowColor='#e5f5ff';ctx.shadowBlur=17;ctx.fillStyle='#f4faff';ctx.beginPath();ctx.arc(x,y,4.5,0,7);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='rgba(233,246,255,.7)';ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(x,y,16+Math.sin(s.total*2)*2,0,7);ctx.stroke();if(arrow){ctx.beginPath();ctx.moveTo(x-5,y+27);ctx.lineTo(x+4,y+32);ctx.lineTo(x-5,y+37);ctx.stroke()}ctx.restore()}
- function draw(){if(!loaded){ctx.fillStyle="#eeece5";ctx.fillRect(0,0,W,H);ctx.fillStyle="#66747b";ctx.font="20px sans-serif";ctx.fillText(loadError?"结尾加载失败，请重新打开游戏":"正在接续故事…",W*.15,H*.5);return;}ctx.save();
+ function draw(){if(!loaded){ctx.fillStyle="#eeece5";ctx.fillRect(0,0,W,H);ctx.fillStyle="#66747b";ctx.font="20px sans-serif";ctx.fillText(loadError?GameL10N.t('loadError'):GameL10N.t('loading'),W*.15,H*.5);return;}ctx.save();
  const active=media[s.clip];if(active&&active.readyState>=2&&!active.seeking){retainedCtx.drawImage(active,0,0,W,H);hasFrame=true;}
  if(hasFrame)ctx.drawImage(retained,0,0,W,H);else{ctx.fillStyle='#202b33';ctx.fillRect(0,0,W,H);}
  if(s.stage==='take-fade'||(s.stage==='leave'&&s.t<.3)){ctx.fillStyle='#202b33';ctx.globalAlpha=s.stage==='take-fade'?smooth(s.t/.3):1-smooth(s.t/.3);ctx.fillRect(0,0,W,H);ctx.globalAlpha=1}
  if(s.stage==='night-fade'){ctx.fillStyle='#eeece5';ctx.globalAlpha=smooth(s.t/1.5);ctx.fillRect(0,0,W,H);ctx.globalAlpha=1}
- if(s.stage==='dawn'){ctx.fillStyle='#eeece5';ctx.fillRect(0,0,W,H);ctx.fillStyle='rgba(70,80,87,'+Math.sin(Math.PI*clamp(s.t/2.8))+')';ctx.font='25px SimSun,serif';ctx.textAlign='center';ctx.fillText('翌日',W/2,H*.48)}
+ if(s.stage==='dawn'){ctx.fillStyle='#eeece5';ctx.fillRect(0,0,W,H);ctx.fillStyle='rgba(70,80,87,'+Math.sin(Math.PI*clamp(s.t/2.8))+')';ctx.font='25px SimSun,serif';ctx.textAlign='center';ctx.fillText(GameL10N.t('nextDay'),W/2,H*.48)}
  if(s.stage==='window'){if(s.t<.7){ctx.fillStyle='#eeece5';ctx.globalAlpha=1-smooth(s.t/.7);ctx.fillRect(0,0,W,H);ctx.globalAlpha=1}if(media.window.currentTime>=2)glow(W*.415,H*.78)}
  
  if(s.stage==='corridor-hold'){
@@ -38,7 +38,7 @@ window.createDailyEnding=function(canvas,ctx,W,H){
  }
  if(s.stage==='crossing-wait')glow(W*.49,H*.86);
  if(s.stage==='crossing'){const duration=Number.isFinite(media.crossing.duration)?media.crossing.duration:8;ctx.fillStyle='#eeece5';ctx.globalAlpha=smooth((media.crossing.currentTime-(duration-3.8))/3.5);ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;}
- if(s.stage==='end'){ctx.fillStyle='#eeece5';ctx.fillRect(0,0,W,H);ctx.globalAlpha=smooth(s.t/1.8);ctx.fillStyle='#57676d';ctx.textAlign='center';ctx.font='22px SimSun,serif';ctx.fillText('我们只在世界毁灭时相见',W/2,H*.46);ctx.font='24px SimSun,serif';ctx.fillText('终',W/2,H*.54);}
+ if(s.stage==='end'){ctx.fillStyle='#eeece5';ctx.fillRect(0,0,W,H);ctx.globalAlpha=smooth(s.t/1.8);ctx.fillStyle='#57676d';ctx.textAlign='center';ctx.font='22px SimSun,serif';ctx.fillText(GameL10N.t('title'),W/2,H*.46);ctx.font='24px SimSun,serif';ctx.fillText(GameL10N.t('end'),W/2,H*.54);}
  ctx.restore();canvas.dataset.state=JSON.stringify({phase:'daily',stage:s.stage,t:s.t,clip:s.clip,videoTime:media[s.clip]?.currentTime,videoEnded:media[s.clip]?.ended,history:s.history});}
  function bridge(alpha){ctx.save();ctx.globalAlpha=smooth(alpha);if(media.afterglow?.readyState>=2)ctx.drawImage(media.afterglow,0,0,W,H);ctx.restore()}
  return{get ready(){return preload()},preload,state:s,down,move,up,cancel,pause,update,draw,bridge};
